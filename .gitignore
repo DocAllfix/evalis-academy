@@ -1,0 +1,115 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Env (mai committare segreti; .env.example sì)
+.env
+.env.*
+!.env.example
+
+# Cloni di studio (vedi references/_REPORT per l'analisi)
+references/
+
+# Mockup concettuali (bozze di comunicazione, non prodotto)
+mockups/
+
+# Documenti interni di sviluppo (NON pubblici): restano in locale, fuori dalla repo
+# ARCHITETTURA.md NON e' piu' escluso: e' la fonte di verita' architetturale citata dal
+# README, ed e' il documento che PRE-LAUNCH.md indica di consegnare alla revisione esterna.
+# Tenerlo fuori dal repository significava che chi clonava non lo trovava.
+FRONTEND-BASE44.md
+BASE44-PROMPT.md
+BASE44-*.md
+CATALOGO-CORSI.md
+catalogocorsievalis.pdf
+
+# Logs / cache
+*.log
+npm-debug.log*
+.turbo/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Deploy / IDE / OS
+.vercel
+.DS_Store
+.idea/
+.vscode/
+
+# Produzione corsi: artefatti pesanti/rigenerabili (i master vivono su R2).
+# Versionati invece: copioni.json, glossario-tts.json, audio-map.json (LOCK),
+# clip-map.json, qa-report.json, manifest.json.
+produzione/*/audio/
+produzione/*/clips/
+produzione/*/shards/
+produzione/asset/
+!produzione/asset/voce-manifest.json
+
+# test/browser artifacts
+.playwright-mcp/
+/test-results/
+/playwright-report/
+*.png
+
+# ...ma gli asset di brand devono essere versionati e deployati su Vercel
+!src/app/icon.png
+!src/app/apple-icon.png
+!src/app/opengraph-image.png
+!public/brand/monogram.png
+
+.vercel
+.env*
+produzione/pronuncia-test/
+
+# Fabbrica copioni: staging e pacchetti (rigenerabili)
+produzione/*/_bozze/
+produzione/*/_pacchetti/
+produzione/*/_log/
+produzione/_staging/
+# Fabbrica v3: credenziali produzione (template versionato, segreti no)
+# NB:  qui sopra annulla l'eccezione scritta piu' in alto (git applica l'ULTIMA regola
+# che combacia), quindi le eccezioni vanno ripetute qui. Nel repository precedente
+# .env.example sopravviveva solo perche' era gia' tracciato da prima della regola.
+!.env.example
+!.env.produzione.example
+# spellcheck: dizionario Hunspell (scaricabile, non versionare i .dic/.aff pesanti)
+scripts/produzione/dict/
+
+# bytecode Python degli script di produzione
+__pycache__/
+*.pyc
+
+# --- Perimetro di questo repository ---------------------------------------------------
+# Qui vive SOLO la piattaforma LMS. La produzione dei contenuti (copioni, slide, audio,
+# avatar, testi delle norme) sta in un repository separato: e' il 99% del peso e non
+# serve a chi lavora sull'applicazione.
+#
+# Non e' una preferenza di ordine. In passato un `git add -A` distratto ha messo in stage
+# 5392 file di produzione in un colpo solo: queste righe fanno in modo che non possa
+# succedere di nuovo, invece di sperare che nessuno sbagli.
+/produzione/
+/slide-in/
+/slide-packages/
+/CORSI-COMPLETI/
+/democorso/
+/docsricerca/
+*-corso-completo.html
+
+# Testi di norme ISO/UNI: materiale protetto da copyright. Non va in un repository, e non
+# va consegnato a terzi.
+/testonorme/
+
+# Script della fabbrica contenuti: qui restano solo quelli di verifica della piattaforma
+scripts/produzione/*
+!scripts/produzione/_verifica-blog.ts
+!scripts/produzione/_verifica-consenso.mjs
+!scripts/produzione/_verifica-listino.ts
+!scripts/produzione/_scatti-blog.mjs

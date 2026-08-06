@@ -1,0 +1,107 @@
+// Validazione delle variabili d'ambiente (zod) — vedi .env.example.
+//
+// SERVER-ONLY: questo file legge segreti (DB, auth, Stripe, ...) e NON deve finire
+// in un bundle client. I valori pubblici (NEXT_PUBLIC_*) si leggono direttamente
+// da `process.env.NEXT_PUBLIC_*` nel codice client (Next.js li inlinea).
+//
+// La validazione gira all'avvio: se manca/è errata una variabile required,
+// il processo fallisce con un messaggio chiaro (criterio Fase 2.0).
+
+import { z } from "zod";
+
+if (typeof window !== "undefined") {
+  throw new Error(
+    "src/lib/env.ts è server-only: non importarlo da codice client. " +
+      "Per i valori pubblici usa process.env.NEXT_PUBLIC_*.",
+  );
+}
+
+const schema = z.object({
+  // --- Database (Supabase EU) ---
+  DATABASE_URL: z.string().min(1, "DATABASE_URL mancante"),
+  DIRECT_URL: z.string().min(1).optional(),
+  AUDIT_DB_ROLE: z.string().min(1).optional(),
+
+  // --- Auth (better-auth) ---
+  BETTER_AUTH_SECRET: z.string().min(16, "BETTER_AUTH_SECRET deve essere ≥ 16 caratteri"),
+  BETTER_AUTH_URL: z.string().url("BETTER_AUTH_URL deve essere un URL valido"),
+
+  // --- Pubbliche (anche client, ma le validiamo qui per l'avvio server) ---
+  NEXT_PUBLIC_APP_URL: z.string().url("NEXT_PUBLIC_APP_URL deve essere un URL valido"),
+  NEXT_PUBLIC_ROOT_DOMAIN: z
+    .string()
+    .min(1, "NEXT_PUBLIC_ROOT_DOMAIN mancante (es. localhost:3000 in dev)"),
+
+  // --- Opzionali: cablati nelle rispettive fasi (billing, storage, email, ...) ---
+  SUPABASE_URL: z.string().url().optional(),
+  SUPABASE_ANON_KEY: z.string().optional(),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  CLOUDFLARE_ACCOUNT_ID: z.string().optional(),
+  CLOUDFLARE_STREAM_API_TOKEN: z.string().optional(),
+  CLOUDFLARE_STREAM_SIGNING_KEY: z.string().optional(), // PEM privata (base64)
+  CLOUDFLARE_STREAM_SIGNING_KEY_ID: z.string().optional(), // kid della signing key
+  CLOUDFLARE_STREAM_CUSTOMER_CODE: z.string().optional(), // customer-<code>.cloudflarestream.com
+  BREVO_API_KEY: z.string().optional(),
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM: z.string().optional(), // mittente del dominio verificato (es. "Evalis <no-reply@...>")
+  // staff piattaforma autorizzato ad approvare/revocare certificati (CSV di email)
+  PLATFORM_STAFF_EMAILS: z.string().optional(),
+  SENTRY_DSN: z.string().optional(),
+  // token segreto per l'anteprima-staff (C.2): permette l'accesso via ?token= all'automazione
+  // Playwright oltre al login admin. Solo lettura del contenuto slide.
+  PREVIEW_TOKEN: z.string().optional(),
+  // Blog headless: WordPress vive su un sottodominio chiuso e il pubblico vede solo il dominio
+  // principale. Nessuno dei due e' scritto nel codice, cosi' lo stesso modulo serve un secondo
+  // sito cambiando solo queste variabili.
+  BLOG_CMS_URL: z.string().optional(),
+  BLOG_CMS_USER: z.string().optional(),
+  BLOG_CMS_APP_PASSWORD: z.string().optional(), // Application Password di WordPress
+  // segreto per l'anteprima delle bozze: finisce negli URL (cronologia, referrer), quindi
+  // resta separato da quello del webhook, che non lascia mai il server
+  BLOG_PREVIEW_TOKEN: z.string().optional(),
+  BLOG_WEBHOOK_TOKEN: z.string().optional(),
+  // impostato da Vercel: autentica i cron. Senza, la rotta del giro quotidiano risponde 404.
+  CRON_SECRET: z.string().optional(),
+  // Manutenzione Stripe: segreto SUO, non piu' PREVIEW_TOKEN condiviso con l'anteprima slide.
+  // La rotta e' spenta finche' STRIPE_ADMIN_ENABLED non vale "1": in produzione resta spenta e
+  // si accende solo per il tempo dell'operazione.
+  STRIPE_ADMIN_TOKEN: z.string().optional(),
+  STRIPE_ADMIN_ENABLED: z.string().optional(),
+});
+
+// A-4 (audit go-live): in PRODUZIONE alcuni segreti NON possono mancare, altrimenti il player
+// degrada IN SILENZIO — `getSignedClipUrl` senza le chiavi Cloudflare ritorna il video demo
+// pubblico (TEST_HLS_MANIFEST): il discente vedrebbe un contenuto sbagliato e il tracking
+// girerebbe su quello. Meglio far fallire il deploy fast. (Stripe/Resend/Sentry si aggiungono
+// qui quando confermati impostati in Vercel — vedi PRE-LAUNCH; oggi richiediamo il gruppo
+// Cloudflare Stream, già configurato e funzionante in produzione.)
+const prodRequiredSchema = schema.superRefine((val, ctx) => {
+  if (process.env.NODE_ENV !== "production") return;
+  const requiredInProd = [
+    "CLOUDFLARE_ACCOUNT_ID",
+    "CLOUDFLARE_STREAM_API_TOKEN",
+    "CLOUDFLARE_STREAM_SIGNING_KEY",
+    "CLOUDFLARE_STREAM_SIGNING_KEY_ID",
+    "CLOUDFLARE_STREAM_CUSTOMER_CODE",
+  ] as const;
+  for (const key of requiredInProd) {
+    if (!val[key]) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: [key], message: `${key} è obbligatoria in produzione` });
+    }
+  }
+});
+
+const parsed = prodRequiredSchema.safeParse(process.env);
+
+if (!parsed.success) {
+  const issues = parsed.error.issues
+    .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
+    .join("\n");
+  throw new Error(`Variabili d'ambiente non valide o mancanti:\n${issues}`);
+}
+
+export const env = parsed.data;
+export type Env = typeof env;

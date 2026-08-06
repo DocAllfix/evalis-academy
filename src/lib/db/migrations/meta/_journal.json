@@ -1,0 +1,195 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1782034548507,
+      "tag": "0000_calm_omega_flight",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1782062052413,
+      "tag": "0001_tense_johnny_blaze",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1782064970366,
+      "tag": "0002_panoramic_talkback",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1782064998813,
+      "tag": "0003_audit_immutability",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1782065544120,
+      "tag": "0004_audit_immutable_fix",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1782067943328,
+      "tag": "0005_lyrical_invaders",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1782070754338,
+      "tag": "0006_big_lorna_dane",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1782300000000,
+      "tag": "0007_rls_tenant_isolation",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1782315672073,
+      "tag": "0008_supreme_menace",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1782319911180,
+      "tag": "0009_kind_goblin_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1782372781600,
+      "tag": "0010_noisy_cloak",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1782392423840,
+      "tag": "0011_sleepy_squadron_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1782400000000,
+      "tag": "0012_rls_valves",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1782500000000,
+      "tag": "0013_rls_enrollment_verify_valve",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1782500100000,
+      "tag": "0014_verify_certificate_fn",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1782500200000,
+      "tag": "0015_app_rls_passthrough",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1782600000000,
+      "tag": "0016_support_ticketing",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1782600100000,
+      "tag": "0017_community_forum",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1782600200000,
+      "tag": "0018_knowledge_pgvector",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1782700000000,
+      "tag": "0019_user_onboarding",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1782800000000,
+      "tag": "0020_rls_heartbeat_progress",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1782900000000,
+      "tag": "0021_iso19011_prerequisite",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1783000000000,
+      "tag": "0022_heartbeat_latest_idx",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1783000100000,
+      "tag": "0023_revoke_activity_log_writes",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1783000200000,
+      "tag": "0024_stripe_processed_event",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1783000300000,
+      "tag": "0025_rate_limit",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1783000400000,
+      "tag": "0026_listino_bundle",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+// Anteprima-staff (C.2 audit go-live): apre QUALSIASI slide per ID con la sua clip firmata,
+// senza iscrizione né gating sequenziale. NON tocca l'antifrode dei discenti (percorso separato).
+// Accesso: platform admin (sessione) OPPURE ?token=<PREVIEW_TOKEN> (per l'automazione Playwright).
+
+import { notFound } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { db } from "@/lib/db";
+import { slide } from "@/lib/db/schema";
+import { getSignedClipUrl } from "@/lib/cloudflare/stream";
+import { segretoValido } from "@/lib/segreti";
+import { getCurrentSession } from "@/lib/auth/server";
+import { isPlatformAdmin } from "@/features/auth/guards";
+import { PreviewPlayer } from "./preview-player";
+
+export const dynamic = "force-dynamic";
+
+async function authorized(token: string | undefined): Promise<boolean> {
+  // confronto a tempo costante: un `===` su stringhe si ferma al primo carattere diverso e
+  // lascia trapelare il segreto un carattere alla volta a chi misura i tempi di risposta
+  if (segretoValido(process.env.PREVIEW_TOKEN, token)) return true;
+  const ctx = await getCurrentSession();
+  return !!ctx && isPlatformAdmin(ctx.user as { email: string; platformRole?: string | null });
+}
+
+export default async function AnteprimaPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slideId: string }>;
+  searchParams: Promise<{ token?: string }>;
+}) {
+  const { slideId } = await params;
+  const { token } = await searchParams;
+  if (!(await authorized(token))) notFound(); // non riveliamo l'esistenza della pagina
+
+  const [s] = await db.select().from(slide).where(eq(slide.id, slideId)).limit(1);
+  if (!s) notFound();
+
+  const clipUrl = s.avatarClipUid ? await getSignedClipUrl(s.avatarClipUid) : null;
+  const blocks = (s.blocks ?? []) as { type?: string; html?: string; ratio?: number }[];
+  const htmlBlock = blocks.find((b) => b?.type === "html");
+  const html = htmlBlock?.html ?? "";
+
+  return <PreviewPlayer html={html} clipUrl={clipUrl} slideId={s.id} ratio={htmlBlock?.ratio} />;
+}
