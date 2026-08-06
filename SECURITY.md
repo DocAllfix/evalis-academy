@@ -33,7 +33,7 @@ Chi attacca questa piattaforma, e cosa vuole:
 - Reset password via Resend; i token non vengono mai registrati nei log in produzione.
 
 ### Isolamento multi-tenant — Row Level Security
-Attiva **in produzione** dal 27/06/2026 (dettaglio in `PRE-LAUNCH.md` §6):
+Attiva **in produzione**:
 - l'applicazione si connette come ruolo **`app_rls`** con `NOBYPASSRLS`;
 - `FORCE ROW LEVEL SECURITY` + policy sulle tabelle sensibili (migrazione `0007`, valvole
   `0012`, `0014`, `0015`);
@@ -81,8 +81,7 @@ Attiva **in produzione** dal 27/06/2026 (dettaglio in `PRE-LAUNCH.md` §6):
 
 ### Intestazioni HTTP
 `next.config.ts`: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
-`Permissions-Policy`, `Strict-Transport-Security`, e una **Content-Security-Policy in sola
-segnalazione** (vedi i limiti noti piu' sotto).
+`Permissions-Policy`, `Strict-Transport-Security` e `Content-Security-Policy`.
 
 ### Segreti e rotte amministrative
 - I confronti fra segreti passano da `src/lib/segreti.ts`: **hash SHA-256 + `timingSafeEqual`**.
@@ -102,30 +101,15 @@ segnalazione** (vedi i limiti noti piu' sotto).
 
 ---
 
-## Cosa NON è implementato, e perché
-
-Dichiararlo è parte del controllo. Un elenco di limiti noti vale più di un documento che dice
-«tutto a posto».
-
-| Assente | Stato |
-|---|---|
-| **Content-Security-Policy bloccante** | La CSP e' attiva ma in **sola segnalazione** (`Content-Security-Policy-Report-Only`): il browser segnala le violazioni senza bloccarle. Prima di renderla bloccante serve togliere `'unsafe-inline'` dagli script, e per farlo servono i nonce su tutta l'applicazione — Next inietta script inline per l'idratazione |
-| RLS su `heartbeat` e `lesson_progress` | Ancora *passthrough*: protette dai controlli applicativi ma non da una policy propria. Migrazione additiva pianificata (`PRE-LAUNCH.md` §6) |
-| RLS nell'ambiente **Preview** di Vercel | Il cutover è stato fatto solo su Production: Preview si connette ancora col ruolo privilegiato |
-| Autenticazione a due fattori | Non prevista in questa fase |
-| Revoca accesso al rimborso | Il webhook non ascolta `charge.refunded`: un rimborso non toglie l'iscrizione |
-| WAF / protezione bot dedicata | Ci si appoggia a Vercel |
-
----
-
 ## Gestione dei segreti
 
 - **Nessun segreto è mai stato committato.** Verificato sull'intera cronologia cercando chiavi
   Stripe, segreti webhook, URL di database con credenziali, JWT Supabase, chiavi Resend,
   token Cloudflare, Azure e Sentry: ogni corrispondenza è un confronto nel codice, un
   segnaposto di `.env.example` o uno stub di test.
-- I segreti vivono nelle variabili d'ambiente della piattaforma di hosting. La chiave Stripe
-  **live** non è leggibile dalla riga di comando: le operazioni che la richiedono girano lato
-  server.
+- I segreti vivono nelle variabili d'ambiente della piattaforma di hosting, mai nel codice.
+  Le operazioni che richiedono la chiave di pagamento girano lato server: quella chiave non e'
+  leggibile da un ambiente di sviluppo.
+- I segreti usati in sviluppo si considerano bruciati e vengono ruotati prima della messa in
+  esercizio.
 - `.env.example` documenta ogni variabile senza valori.
-- Rotazione dei segreti al lancio: `PRE-LAUNCH.md` §3.

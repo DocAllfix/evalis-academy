@@ -38,7 +38,7 @@ Piattaforma LMS multi-tenant per erogare corsi di formazione professionale (sicu
 
 **Policy OSS (C-21):** *DEPENDENCY* (MIT/Apache/ISC, si wrappa con notice) · *CLONE-REF* (si studia e reimplementa, mai lift — vale per AGPL/GPL e per i 3 repo senza licenza) · *BUILD* (codice nostro). Idee/schemi/pattern sono liberi; il codice letterale no.
 
-**Frontend (C-22):** tutto il frontend (view/UI/UX/design) si realizza con **Base44**, non in questo codebase. Qui costruiamo backend + logica + le API/Server Actions/hook che il frontend consumerà. Al momento giusto si genera un prompt Base44 completo, si costruisce, si clona e si importa il frontend. Strategia e raccolta spunti UX/UI in [`FRONTEND-BASE44.md`](./FRONTEND-BASE44.md). Confine sul player: la *logica* antifrode è BUILD nostro, il *chrome visivo* è Base44.
+**Frontend:** vive in questo codebase (113 componenti in `src/components/`). L'impostazione visiva della landing pubblica nasce da un generatore esterno e viene poi integrata e mantenuta qui; le pagine di prodotto — dashboard, player, console azienda e staff — sono costruite direttamente. Confine sul player: la *logica* antifrode e' nostra e sta sul server, il livello visivo e' React.
 
 ---
 

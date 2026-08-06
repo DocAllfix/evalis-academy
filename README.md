@@ -7,8 +7,8 @@ arrivano già prodotti da monte (avatar video + slide + banca domande).
 
 > 📐 **La fonte di verità architetturale è [`ARCHITETTURA.md`](./ARCHITETTURA.md)**: stack, 12
 > moduli, schema del database, criteri di successo.
-> Le linee guida di lavoro sono in [`CLAUDE.md`](./CLAUDE.md), la postura di sicurezza in
-> [`SECURITY.md`](./SECURITY.md), la checklist operativa in [`PRE-LAUNCH.md`](./PRE-LAUNCH.md).
+> La postura di sicurezza e' in [`SECURITY.md`](./SECURITY.md), le scelte di design del
+> prodotto in [`PRODUCT.md`](./PRODUCT.md) e [`DESIGN.md`](./DESIGN.md).
 
 ---
 
@@ -50,7 +50,6 @@ src/lib/            infrastruttura: db (schema per cluster + migrazioni), auth,
                     supabase, cloudflare, stripe, email, env
 src/proxy.ts        multi-tenancy per sottodominio + 410 sugli URL rimossi
 e2e/                Playwright
-infra/blog-cms/     WordPress headless per il blog (documentato in docs/)
 scripts/produzione/ script di verifica: blog, consenso, listino, scatti
 ```
 

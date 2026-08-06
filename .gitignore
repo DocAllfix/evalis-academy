@@ -101,6 +101,12 @@ __pycache__/
 /CORSI-COMPLETI/
 /democorso/
 docs/produzione-corsi/
+# Manuali operativi e configurazioni dei server: riguardano l'esercizio, non l'applicazione,
+# e in un repository pubblico descriverebbero l'infrastruttura di un sistema vivo.
+PRE-LAUNCH.md
+CLAUDE.md
+infra/
+docs/blog-headless-wordpress.md
 /docsricerca/
 *-corso-completo.html
 
