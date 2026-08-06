@@ -81,7 +81,18 @@ Attiva **in produzione** dal 27/06/2026 (dettaglio in `PRE-LAUNCH.md` §6):
 
 ### Intestazioni HTTP
 `next.config.ts`: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
-`Permissions-Policy`, `Strict-Transport-Security`.
+`Permissions-Policy`, `Strict-Transport-Security`, e una **Content-Security-Policy in sola
+segnalazione** (vedi i limiti noti piu' sotto).
+
+### Segreti e rotte amministrative
+- I confronti fra segreti passano da `src/lib/segreti.ts`: **hash SHA-256 + `timingSafeEqual`**.
+  Un `===` fra stringhe si ferma al primo carattere diverso e lascia trapelare il segreto un
+  carattere alla volta a chi misura i tempi di risposta. La funzione **fallisce chiusa** se la
+  variabile d'ambiente manca: una env dimenticata non deve rendere valido qualsiasi valore.
+- La rotta di manutenzione Stripe (`/api/staff/stripe-golive`) ha tre serrature: **spenta di
+  default** (senza `STRIPE_ADMIN_ENABLED=1` risponde 404 a chiunque), **token dedicato**
+  (`STRIPE_ADMIN_TOKEN`, non condiviso con altre funzioni), confronto a tempo costante.
+- Le rotte a token rispondono **404 e non 401**: a chi bussa non si conferma che esistano.
 
 ### Privacy
 - Consenso ai cookie con **Consent Mode v2**: i quattro parametri partono **negati** e Google
@@ -98,7 +109,7 @@ Dichiararlo è parte del controllo. Un elenco di limiti noti vale più di un doc
 
 | Assente | Stato |
 |---|---|
-| **Content-Security-Policy** | Non ancora attiva. Richiede uno studio dedicato per non rompere Cloudflare Stream, Sentry e gli script inline di Next: va introdotta in `report-only` prima di essere applicata |
+| **Content-Security-Policy bloccante** | La CSP e' attiva ma in **sola segnalazione** (`Content-Security-Policy-Report-Only`): il browser segnala le violazioni senza bloccarle. Prima di renderla bloccante serve togliere `'unsafe-inline'` dagli script, e per farlo servono i nonce su tutta l'applicazione — Next inietta script inline per l'idratazione |
 | RLS su `heartbeat` e `lesson_progress` | Ancora *passthrough*: protette dai controlli applicativi ma non da una policy propria. Migrazione additiva pianificata (`PRE-LAUNCH.md` §6) |
 | RLS nell'ambiente **Preview** di Vercel | Il cutover è stato fatto solo su Production: Preview si connette ancora col ruolo privilegiato |
 | Autenticazione a due fattori | Non prevista in questa fase |
