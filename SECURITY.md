@@ -81,7 +81,12 @@ Attiva **in produzione**:
 
 ### Intestazioni HTTP
 `next.config.ts`: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`,
-`Permissions-Policy`, `Strict-Transport-Security` e `Content-Security-Policy`.
+`Permissions-Policy`, `Strict-Transport-Security`.
+
+La **Content-Security-Policy** e' in vigore come `Content-Security-Policy-Report-Only`: il
+browser segnala le violazioni e le raccogliamo per stringere le direttive sui casi reali prima
+di renderla bloccante. Una CSP scritta a tavolino e messa subito in blocco spegne il player
+video — cioe' il prodotto — su un caso che nessuno aveva previsto.
 
 ### Segreti e rotte amministrative
 - I confronti fra segreti passano da `src/lib/segreti.ts`: **hash SHA-256 + `timingSafeEqual`**.
