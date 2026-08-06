@@ -12,7 +12,7 @@ arrivano già prodotti da monte (avatar video + slide + banca domande).
 
 ---
 
-## Perché esiste, in una riga
+## Il perche dei Vincoli Esistenziali
 
 Un corso di formazione vale come titolo solo se si può **dimostrare** che è stato seguito. Tutto
 ciò che segue — il tracciamento sul server, il registro append-only, il quiz corretto lato
